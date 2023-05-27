@@ -50,7 +50,7 @@ namespace BuhlerTests
         }
 
         [TestMethod]
-        public void TwoNotOverlappedRecipesAreCreated()
+        public void TwoNotOverlappingRecipesAreCreated()
         {
             var machine = new Mock<IMachine>();
             var scheduler = new SimpleScheduler(machine.Object);
@@ -70,7 +70,7 @@ namespace BuhlerTests
         }
 
         [TestMethod]
-        public void TwoOverlappedRecipesForDifferentMachinesAreCreated()
+        public void TwoOverlappingRecipesForDifferentMachinesAreCreated()
         {
             var machine1 = new Mock<IMachine>();
             var machine2 = new Mock<IMachine>();
@@ -95,7 +95,7 @@ namespace BuhlerTests
         [DataRow(59, 60)]
         [DataRow(-59, 60)]
         [DataRow(65, 120)]
-        public void TwoOverlappedRecipesCreationThrowsException(int creationTimeDelta, int duration)
+        public void TwoOverlappingRecipesCreationThrowsException(int creationTimeDelta, int duration)
         {
             var machine = new Mock<IMachine>();
             var scheduler = new SimpleScheduler(machine.Object);

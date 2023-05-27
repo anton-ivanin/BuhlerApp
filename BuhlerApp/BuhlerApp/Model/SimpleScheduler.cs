@@ -7,6 +7,8 @@
 
         private readonly SortedList<DateTime, IRecipe> recipes;
 
+        private readonly object lockObject = new object();
+
         public SimpleScheduler(IMachine machine)
         {
             this.machine = machine;
@@ -25,20 +27,28 @@
                 throw new ArgumentOutOfRangeException(nameof(startTime), "Cannot schedule recipe to the past time.");
             }
 
-            if (!IsTimePeriodAvailable(startTime, duration))
-            {
-                throw new ArgumentException("Selected period is not available");
-            }
+            IRecipe recipe;
 
-            IRecipe recipe = CreateReceipe(name, startTime, duration);
-            recipes.Add(startTime, recipe);
+            lock (lockObject)
+            {
+                if (!IsTimePeriodAvailable(startTime, duration))
+                {
+                    throw new ArgumentException("Selected period is not available");
+                }
+                
+                recipe = CreateReceipe(name, startTime, duration);
+                recipes.Add(startTime, recipe);
+            }
 
             return recipe;
         }
 
         public void Cancel(IRecipe recipe)
         {
-            recipes.Remove(recipe.StartTime);
+            lock (lockObject)
+            {
+                recipes.Remove(recipe.StartTime);
+            }
         }
 
         public IEnumerable<IRecipe> GetSchedule()
